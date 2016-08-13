@@ -28,7 +28,7 @@ public class PDIJobExecutionListener {
 	private static final Logger logger = LogManager.getLogger(PDIJobExecutionListener.class.getName());
 
 	public static void main(String[] args) {
-		logger.info("### BEGIN: main");
+		logger.info("### BEGIN: PDIJobExecutionListener.main");
 
 		ConnectionFactory factory = new ConnectionFactory();
 		factory.setHost(HOST);
@@ -83,6 +83,7 @@ public class PDIJobExecutionListener {
 				if (job.getErrors() > 0) {
 					logger.info("### job.getErrors()");
 				}
+				logger.info("### END: DefaultConsumer.handleDelivery");
 			}
 		};
 		try {
@@ -93,6 +94,6 @@ public class PDIJobExecutionListener {
 			ioException.printStackTrace();
 			return;
 		}
-		logger.info("### END");
+		logger.info("### END: PDIJobExecutionListener.main");
 	}
 }
