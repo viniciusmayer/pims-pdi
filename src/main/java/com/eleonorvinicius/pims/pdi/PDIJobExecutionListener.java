@@ -1,6 +1,8 @@
 package com.eleonorvinicius.pims.pdi;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.TimeoutException;
 
 import org.apache.logging.log4j.LogManager;
@@ -22,14 +24,25 @@ import com.rabbitmq.client.Envelope;
 
 public class PDIJobExecutionListener {
 
-	private static final String PDI_JOB = "src/main/resources/analiseJob.kjb";
 	private static final String HOST = "localhost";
 	private static final String QUEUE_NAME = "pims";
 	private static final Logger logger = LogManager.getLogger(PDIJobExecutionListener.class.getName());
 
 	public static void main(String[] args) {
 		logger.info("### BEGIN: PDIJobExecutionListener.main");
-
+		
+		List<String> listArgs = Arrays.asList(args);
+		if (listArgs.isEmpty()){
+			logger.error("### ERROR: listArgs.isEmpty()");
+			return;
+		}
+		
+		final String pdiJob = listArgs.get(0);
+		if (pdiJob == null || pdiJob.isEmpty()){
+			logger.error("### ERROR: pdiJob.isEmpty()");
+			return;
+		}
+		
 		ConnectionFactory factory = new ConnectionFactory();
 		factory.setHost(HOST);
 		Connection connection = null;
@@ -67,7 +80,7 @@ public class PDIJobExecutionListener {
 				}
 				JobMeta jobmeta;
 				try {
-					jobmeta = new JobMeta(PDI_JOB, null);
+					jobmeta = new JobMeta(pdiJob, null);
 					logger.info("### new JobMeta()");
 				} catch (KettleXMLException e) {
 					logger.error("### ERROR: new JobMeta()");
