@@ -4,7 +4,7 @@
 	<name>PIMS PDI</name>
 
 	<groupId>com.eleonorvinicius.pims</groupId>
-	<artifactId>pdi</artifactId>
+	<artifactId>pims-pdi</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
