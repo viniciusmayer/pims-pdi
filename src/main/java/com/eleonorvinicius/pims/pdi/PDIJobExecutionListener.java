@@ -1,6 +1,7 @@
 package com.eleonorvinicius.pims.pdi;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
@@ -24,12 +25,25 @@ import com.rabbitmq.client.Envelope;
 
 public class PDIJobExecutionListener {
 
-	private static final String HOST = "localhost";
-	private static final String QUEUE_NAME = "pims";
 	private static final Logger logger = LogManager.getLogger(PDIJobExecutionListener.class.getName());
 
 	public static void main(String[] args) {
 		logger.info("### BEGIN: PDIJobExecutionListener.main");
+
+		String queueHost = "localhost";
+		String queueName = "pims";
+		try {
+			logger.info("### ConfiguracaoDAO.getInstance()");
+			ConfiguracaoDAO configuracaoDAO = ConfiguracaoDAO.getInstance();
+			logger.info("### configuracaoDAO.getValor():QUEUE_HOST");
+			queueHost = configuracaoDAO.getValor("QUEUE_HOST");
+			logger.info("### configuracaoDAO.getValor():QUEUE_NAME");
+			queueName = configuracaoDAO.getValor("QUEUE_NAME");
+		} catch (SQLException sqlException) {
+			logger.error("### ERROR: ");
+			sqlException.printStackTrace();
+			return;
+		}
 		
 		List<String> listArgs = Arrays.asList(args);
 		if (listArgs.isEmpty()){
@@ -42,18 +56,18 @@ public class PDIJobExecutionListener {
 			logger.error("### ERROR: pdiJob.isEmpty()");
 			return;
 		}
-		
+
 		ConnectionFactory factory = new ConnectionFactory();
-		factory.setHost(HOST);
+		factory.setHost(queueHost);
 		Connection connection = null;
 		Channel channel = null;
 		try {
-			connection = factory.newConnection();
 			logger.info("### factory.newConnection()");
-			channel = connection.createChannel();
+			connection = factory.newConnection();
 			logger.info("### connection.createChannel()");
-			channel.queueDeclare(QUEUE_NAME, false, false, false, null);
+			channel = connection.createChannel();
 			logger.info("### channel.queueDeclare()");
+			channel.queueDeclare(queueName, false, false, false, null);
 		} catch (IOException ioException) {
 			logger.error("### ERROR: ");
 			ioException.printStackTrace();
@@ -71,28 +85,28 @@ public class PDIJobExecutionListener {
 				logger.info("### BEGIN: DefaultConsumer.handleDelivery");
 				Repository repository = null;
 				try {
-					KettleEnvironment.init();
 					logger.info("### KettleEnvironment.init()");
-				} catch (KettleException e) {
+					KettleEnvironment.init();
+				} catch (KettleException kettleException) {
 					logger.error("### ERROR: KettleEnvironment.init()");
-					e.printStackTrace();
+					kettleException.printStackTrace();
 					return;
 				}
 				JobMeta jobmeta;
 				try {
-					jobmeta = new JobMeta(pdiJob, null);
 					logger.info("### new JobMeta()");
-				} catch (KettleXMLException e) {
+					jobmeta = new JobMeta(pdiJob, null);
+				} catch (KettleXMLException kettleXMLException) {
 					logger.error("### ERROR: new JobMeta()");
-					e.printStackTrace();
+					kettleXMLException.printStackTrace();
 					return;
 				}
-				Job job = new Job(repository, jobmeta);
 				logger.info("### new Job()");
-				job.start();
+				Job job = new Job(repository, jobmeta);
 				logger.info("### job.start()");
-				job.waitUntilFinished();
+				job.start();
 				logger.info("### job.waitUntilFinished()");
+				job.waitUntilFinished();
 				if (job.getErrors() > 0) {
 					logger.info("### job.getErrors()");
 				}
@@ -100,8 +114,8 @@ public class PDIJobExecutionListener {
 			}
 		};
 		try {
-			channel.basicConsume(QUEUE_NAME, true, consumer);
 			logger.info("### channel.basicConsume()");
+			channel.basicConsume(queueName, true, consumer);
 		} catch (IOException ioException) {
 			logger.error("### ERROR: channel.basicConsume()");
 			ioException.printStackTrace();
