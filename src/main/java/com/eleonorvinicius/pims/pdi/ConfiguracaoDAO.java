@@ -25,7 +25,7 @@ public class ConfiguracaoDAO {
 	public String getValor(String chave) throws SQLException {
 		String valor = null;
 
-		PreparedStatement preparedStatement = connection.prepareStatement("select valor from backend_configuracao where chave = ?");
+		PreparedStatement preparedStatement = connection.prepareStatement("select c.valor from backend_configuracao c where c.chave = ?");
 		preparedStatement.setString(1, chave);
 		ResultSet resultSet = preparedStatement.executeQuery();
 		while (resultSet.next()) {
