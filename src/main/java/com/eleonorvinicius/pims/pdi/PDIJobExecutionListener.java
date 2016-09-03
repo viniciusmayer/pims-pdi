@@ -33,14 +33,14 @@ public class PDIJobExecutionListener {
 	public static void main(String[] args) {
 		logger.info("### BEGIN: PDIJobExecutionListener.main");
 
-		String queueHost = "localhost";
-		String queueName = "pims";
-		String pdiJobExtension = "kjb";
+		String queueHost = null;
+		String queueName = null;
+		String pdiJobExtension = null;
 		try {
 			ConfiguracaoDAO configuracaoDAO = ConfiguracaoDAO.getInstance();
-			queueHost = configuracaoDAO.getValor("QUEUE_HOST");
-			queueName = configuracaoDAO.getValor("QUEUE_NAME");
-			pdiJobExtension = configuracaoDAO.getValor("PDI_JOB_EXTENSION");
+			queueHost = configuracaoDAO.getValor(ConfiguracaoEnum.QUEUE_HOST);
+			queueName = configuracaoDAO.getValor(ConfiguracaoEnum.QUEUE_NAME);
+			pdiJobExtension = configuracaoDAO.getValor(ConfiguracaoEnum.PDI_JOB_EXTENSION);
 		} catch (SQLException sqlException) {
 			logger.error("### ERROR: ");
 			sqlException.printStackTrace();
