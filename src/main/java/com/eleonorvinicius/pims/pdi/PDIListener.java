@@ -16,9 +16,9 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Consumer;
 
-public class PDIJobExecutionListener {
+public class PDIListener {
 
-	private static final Logger logger = LogManager.getLogger(PDIJobExecutionListener.class.getName());
+	private static final Logger logger = LogManager.getLogger(PDIListener.class.getName());
 
 	public static void main(String[] args) {
 		logger.info("### BEGIN: PDIJobExecutionListener.main");
