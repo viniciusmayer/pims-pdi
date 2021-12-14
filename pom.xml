@@ -40,7 +40,7 @@
 		<kettle-version>7.0.0.6-95</kettle-version>
 		<postgresql-version>9.4.1212</postgresql-version>
 		<rabbitmq-version>4.8.0</rabbitmq-version>
-		<log4j-version>2.13.3</log4j-version>
+		<log4j-version>2.16.0</log4j-version>
 	</properties>
 
 	<dependencies>
